@@ -1,0 +1,46 @@
+# depslib dependency file v1.0
+1767471653 source:c:\users\hp\desktop\mini_compiler\mini_compiler\lexer.cpp
+	"lexer.h"
+	<cctype>
+
+1767471653 c:\users\hp\desktop\mini_compiler\mini_compiler\lexer.h
+	<string>
+	<vector>
+	<unordered_map>
+
+1767522914 source:c:\users\hp\desktop\mini_compiler\mini_compiler\main.cpp
+	<iostream>
+	<string>
+	"lexer.h"
+	"parser.h"
+	"semantic.h"
+
+1767522107 source:c:\users\hp\desktop\mini_compiler\mini_compiler\parser.cpp
+	"parser.h"
+	<stdexcept>
+
+1767521669 c:\users\hp\desktop\mini_compiler\mini_compiler\parser.h
+	"lexer.h"
+	"ast.h"
+
+1767521669 c:\users\hp\desktop\mini_compiler\mini_compiler\ast.h
+	<string>
+	<vector>
+	<memory>
+
+1767518540 c:\users\hp\desktop\mini_compiler\mini_compiler\semantic.h
+	"ast.h"
+	"symbol.h"
+
+1767518540 c:\users\hp\desktop\mini_compiler\mini_compiler\symbol.h
+	<unordered_map>
+	<vector>
+	<string>
+
+1767518540 source:c:\users\hp\desktop\mini_compiler\mini_compiler\symbol.cpp
+	"symbol.h"
+
+1767519881 source:c:\users\hp\desktop\mini_compiler\mini_compiler\semantic.cpp
+	"semantic.h"
+	<stdexcept>
+
