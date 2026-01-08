@@ -13,31 +13,33 @@ argument matching during calls, and correct return type usage. The goal is to de
 #include "parser.h"
 #include "semantic.h"
 
-void runTest(const std::string& title, const std::string& source) {
-    std::cout << "\n=====================================\n";
-    std::cout << title << "\n";
-    std::cout << "-------------------------------------\n";
-    std::cout << source << "\n";
-    std::cout << "-------------------------------------\n";
+using namespace std;
+
+void runTest(const string& title, const string& source) {
+    cout << "\n=====================================\n";
+    cout << title << "\n";
+    cout << "-------------------------------------\n";
+    cout << source << "\n";
+    cout << "-------------------------------------\n";
 
     try {
         // LEXER
         Lexer lexer(source);
         auto tokens = lexer.tokenize();
-        std::cout << "Lexer: PASSED\n";
+        cout << "Lexer: PASSED\n";
 
         // PARSER
         Parser parser(tokens);
         auto ast = parser.parse();
-        std::cout << "Parser: PASSED\n";
+        cout << "Parser: PASSED\n";
 
         // SEMANTIC
         SemanticAnalyzer semantic;
         semantic.analyze(ast);
-        std::cout << "Semantic: PASSED\n";
+        cout << "Semantic: PASSED\n";
     }
-    catch (const std::exception& e) {
-        std::cout << "❌ ERROR: " << e.what() << "\n";
+    catch (const exception& e) {
+        cout << "❌ ERROR: " << e.what() << "\n";
     }
 }
 

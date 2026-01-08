@@ -5,10 +5,12 @@
 #include <vector>
 #include <string>
 
+using namespace std;
+
 // Function metadata
 struct FunctionInfo {
-    std::string returnType;
-    std::vector<std::string> paramTypes;
+    string returnType;
+    vector<string> paramTypes;
 };
 
 class SymbolTable {
@@ -18,24 +20,24 @@ public:
     void exitScope();
 
     // Variables
-    bool declare(const std::string& name, const std::string& type);
-    bool isDeclared(const std::string& name) const;
-    std::string getType(const std::string& name) const;
+    bool declare(const string& name, const string& type);
+    bool isDeclared(const string& name) const;
+    string getType(const string& name) const;
 
     // Functions (NEW)
-    bool declareFunction(const std::string& name,
+    bool declareFunction(const string& name,
                          const FunctionInfo& info);
-    bool hasFunction(const std::string& name) const;
-    FunctionInfo getFunction(const std::string& name) const;
+    bool hasFunction(const string& name) const;
+    FunctionInfo getFunction(const string& name) const;
 
 private:
     // Variable scopes
-    std::vector<
-        std::unordered_map<std::string, std::string>
+    vector<
+        unordered_map<string, string>
     > scopes;
 
     // Function table (global)
-    std::unordered_map<std::string, FunctionInfo> functions;
+    unordered_map<string, FunctionInfo> functions;
 };
 
 #endif

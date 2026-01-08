@@ -4,20 +4,22 @@
 #include "ast.h"
 #include "symbol.h"
 
+using namespace std;
+
 class SemanticAnalyzer {
 public:
-    void analyze(const std::vector<StmtPtr>& program);
+    void analyze(const vector<StmtPtr>& program);
 
 private:
     SymbolTable symbols;
 
     // Track current function context
-    std::string currentFunctionName;
-    std::string currentReturnType;
+    string currentFunctionName;
+    string currentReturnType;
     bool hasReturn = false;
 
     void analyzeStmt(const StmtPtr& stmt);
-    std::string analyzeExpr(const ExprPtr& expr);
+    string analyzeExpr(const ExprPtr& expr);
 
 
 };

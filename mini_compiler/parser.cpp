@@ -1,8 +1,10 @@
 #include "parser.h"
 #include <stdexcept>
 
+using namespace std;
+
 // ---------------- constructor ----------------
-Parser::Parser(const std::vector<Token>& tokens)
+Parser::Parser(const vector<Token>& tokens)
     : tokens(tokens), pos(0) {}
 
 
@@ -28,19 +30,19 @@ bool Parser::match(TokenType type) {
     return false;
 }
 
-const Token& Parser::expect(TokenType type, const std::string& msg) {
+const Token& Parser::expect(TokenType type, const string& msg) {
     if (peek().type == type)
         return advance();
 
-    throw std::runtime_error(
+    throw runtime_error(
         "Parser error at line " +
-        std::to_string(peek().line) + ": " + msg);
+        to_string(peek().line) + ": " + msg);
 }
 
 
 // ---------------- entry ----------------
-std::vector<StmtPtr> Parser::parse() {
-    std::vector<StmtPtr> program;
+vector<StmtPtr> Parser::parse() {
+    vector<StmtPtr> program;
 
     while (!isAtEnd()) {
         program.push_back(declaration());
@@ -70,7 +72,7 @@ StmtPtr Parser::declaration() {
         expect(TokenType::SEMI,
             "Expected ';' after variable declaration");
 
-        return std::make_shared<VarDecl>(
+        return make_shared<VarDecl>(
             typeToken.lexeme, name.lexeme);
     }
 
@@ -81,7 +83,7 @@ StmtPtr Parser::declaration() {
 // ---------------- function declaration ----------------
 StmtPtr Parser::functionDecl(Token returnType, Token name) {
 
-    auto func = std::make_shared<FunctionDecl>();
+    auto func = make_shared<FunctionDecl>();
     func->returnType = returnType.lexeme;
     func->name = name.lexeme;
 
@@ -106,7 +108,7 @@ StmtPtr Parser::functionDecl(Token returnType, Token name) {
         "Expected '{' before function body");
 
     func->body =
-        std::dynamic_pointer_cast<BlockStmt>(block());
+        dynamic_pointer_cast<BlockStmt>(block());
 
     return func;
 }
@@ -124,7 +126,7 @@ StmtPtr Parser::statement() {
     ExprPtr expr = expression();
     expect(TokenType::SEMI, "Expected ';' after expression");
 
-    return std::make_shared<ExprStmt>(expr);
+    return make_shared<ExprStmt>(expr);
 }
 
 StmtPtr Parser::returnStmt() {
@@ -136,11 +138,11 @@ StmtPtr Parser::returnStmt() {
             "Expected ';' after return value");
     }
 
-    return std::make_shared<ReturnStmt>(value);
+    return make_shared<ReturnStmt>(value);
 }
 
 StmtPtr Parser::block() {
-    auto blk = std::make_shared<BlockStmt>();
+    auto blk = make_shared<BlockStmt>();
 
     while (!isAtEnd() && !match(TokenType::RBRACE)) {
         blk->statements.push_back(declaration());
@@ -161,11 +163,11 @@ ExprPtr Parser::assignment() {
     if (match(TokenType::ASSIGN)) {
         ExprPtr value = assignment();
 
-        if (auto var = std::dynamic_pointer_cast<VarExpr>(expr)) {
-            return std::make_shared<AssignExpr>(var->name, value);
+        if (auto var = dynamic_pointer_cast<VarExpr>(expr)) {
+            return make_shared<AssignExpr>(var->name, value);
         }
 
-        throw std::runtime_error("Invalid assignment target");
+        throw runtime_error("Invalid assignment target");
     }
 
     return expr;
@@ -179,9 +181,9 @@ ExprPtr Parser::term() {
     while (peek().type == TokenType::PLUS ||
            peek().type == TokenType::MINUS) {
 
-        std::string op = advance().lexeme;
+        string op = advance().lexeme;
         ExprPtr right = factor();
-        expr = std::make_shared<BinaryExpr>(op, expr, right);
+        expr = make_shared<BinaryExpr>(op, expr, right);
     }
 
     return expr;
@@ -193,9 +195,9 @@ ExprPtr Parser::factor() {
     while (peek().type == TokenType::STAR ||
            peek().type == TokenType::SLASH) {
 
-        std::string op = advance().lexeme;
+        string op = advance().lexeme;
         ExprPtr right = unary();
-        expr = std::make_shared<BinaryExpr>(op, expr, right);
+        expr = make_shared<BinaryExpr>(op, expr, right);
     }
 
     return expr;
@@ -203,7 +205,7 @@ ExprPtr Parser::factor() {
 
 ExprPtr Parser::unary() {
     if (match(TokenType::MINUS)) {
-        return std::make_shared<UnaryExpr>("-", unary());
+        return make_shared<UnaryExpr>("-", unary());
     }
 
     return primary();
@@ -214,19 +216,19 @@ ExprPtr Parser::unary() {
 ExprPtr Parser::primary() {
 
     if (match(TokenType::TRUE))
-        return std::make_shared<BoolExpr>(true);
+        return make_shared<BoolExpr>(true);
 
     if (match(TokenType::FALSE))
-        return std::make_shared<BoolExpr>(false);
+        return make_shared<BoolExpr>(false);
 
     if (peek().type == TokenType::NUMBER)
-        return std::make_shared<NumberExpr>(advance().lexeme);
+        return make_shared<NumberExpr>(advance().lexeme);
 
     if (peek().type == TokenType::IDENT) {
         Token name = advance();
 
         if (match(TokenType::LPAREN)) {
-            std::vector<ExprPtr> args;
+            vector<ExprPtr> args;
 
             if (!match(TokenType::RPAREN)) {
                 do {
@@ -236,11 +238,11 @@ ExprPtr Parser::primary() {
                 expect(TokenType::RPAREN, "Expected ')'");
             }
 
-            return std::make_shared<CallExpr>(
+            return make_shared<CallExpr>(
                 name.lexeme, args);
         }
 
-        return std::make_shared<VarExpr>(name.lexeme);
+        return make_shared<VarExpr>(name.lexeme);
     }
 
     expect(TokenType::LPAREN, "Expected '('");

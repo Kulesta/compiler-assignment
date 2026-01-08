@@ -5,21 +5,23 @@
 #include "lexer.h"
 #include "ast.h"
 
+using namespace std;
+
 class Parser {
 public:
-    explicit Parser(const std::vector<Token>& tokens);
+    explicit Parser(const vector<Token>& tokens);
 
-    std::vector<StmtPtr> parse();
+    vector<StmtPtr> parse();
 
 private:
-    const std::vector<Token>& tokens;
+    const vector<Token>& tokens;
     size_t pos = 0;
 
     bool isAtEnd() const;
     const Token& peek() const;
     const Token& advance();
     bool match(TokenType type);
-    const Token& expect(TokenType type, const std::string& msg);
+    const Token& expect(TokenType type, const string& msg);
 
     // declarations
     StmtPtr declaration();

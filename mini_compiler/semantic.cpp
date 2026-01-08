@@ -1,8 +1,10 @@
 #include "semantic.h"
 #include <stdexcept>
 
+using namespace std;
+
 void SemanticAnalyzer::analyze(
-    const std::vector<StmtPtr>& program) {
+    const vector<StmtPtr>& program) {
 
     symbols.enterScope();
 
@@ -15,14 +17,14 @@ void SemanticAnalyzer::analyze(
 void SemanticAnalyzer::analyzeStmt(const StmtPtr& stmt) {
 
     // ---------------- Variable Declaration ----------------
-    if (auto v = std::dynamic_pointer_cast<VarDecl>(stmt)) {
+    if (auto v = dynamic_pointer_cast<VarDecl>(stmt)) {
         if (!symbols.declare(v->name, v->type))
-            throw std::runtime_error(
+            throw runtime_error(
                 "Variable redeclared: " + v->name);
     }
 
     // ---------------- Function Declaration ----------------
-    else if (auto f = std::dynamic_pointer_cast<FunctionDecl>(stmt)) {
+    else if (auto f = dynamic_pointer_cast<FunctionDecl>(stmt)) {
 
         // Register function signature
         FunctionInfo info;
@@ -32,11 +34,11 @@ void SemanticAnalyzer::analyzeStmt(const StmtPtr& stmt) {
             info.paramTypes.push_back(p.type);
 
         if (!symbols.declareFunction(f->name, info))
-            throw std::runtime_error(
+            throw runtime_error(
                 "Function redeclared: " + f->name);
 
         // Save previous function context
-        std::string prevReturn = currentReturnType;
+        string prevReturn = currentReturnType;
         bool prevHasReturn = hasReturn;
 
         currentReturnType = f->returnType;
@@ -53,7 +55,7 @@ void SemanticAnalyzer::analyzeStmt(const StmtPtr& stmt) {
 
         // Enforce return rule
         if (currentReturnType != "void" && !hasReturn)
-            throw std::runtime_error(
+            throw runtime_error(
                 "Function '" + f->name + "' must return a value");
 
         // Restore context
@@ -62,7 +64,7 @@ void SemanticAnalyzer::analyzeStmt(const StmtPtr& stmt) {
     }
 
     // ---------------- Block ----------------
-    else if (auto b = std::dynamic_pointer_cast<BlockStmt>(stmt)) {
+    else if (auto b = dynamic_pointer_cast<BlockStmt>(stmt)) {
         symbols.enterScope();
         for (auto& s : b->statements)
             analyzeStmt(s);
@@ -70,70 +72,70 @@ void SemanticAnalyzer::analyzeStmt(const StmtPtr& stmt) {
     }
 
     // ---------------- Return Statement ----------------
-    else if (auto r = std::dynamic_pointer_cast<ReturnStmt>(stmt)) {
+    else if (auto r = dynamic_pointer_cast<ReturnStmt>(stmt)) {
 
         hasReturn = true;
 
         if (currentReturnType == "void") {
             if (r->expr)
-                throw std::runtime_error(
+                throw runtime_error(
                     "Void function should not return a value");
         }
         else {
             if (!r->expr)
-                throw std::runtime_error(
+                throw runtime_error(
                     "Non-void function must return a value");
 
-            std::string exprType = analyzeExpr(r->expr);
+            string exprType = analyzeExpr(r->expr);
             if (exprType != currentReturnType)
-                throw std::runtime_error(
+                throw runtime_error(
                     "Return type mismatch: expected " +
                     currentReturnType + ", got " + exprType);
         }
     }
 }
 
-std::string SemanticAnalyzer::analyzeExpr(const ExprPtr& expr) {
+string SemanticAnalyzer::analyzeExpr(const ExprPtr& expr) {
 
     // ---------------- Variable Expression ----------------
-    if (auto v = std::dynamic_pointer_cast<VarExpr>(expr)) {
+    if (auto v = dynamic_pointer_cast<VarExpr>(expr)) {
         if (!symbols.isDeclared(v->name))
-            throw std::runtime_error(
+            throw runtime_error(
                 "Undefined variable: " + v->name);
 
         return symbols.getType(v->name);
     }
 
     // ---------------- Binary Expression ----------------
-    else if (auto b = std::dynamic_pointer_cast<BinaryExpr>(expr)) {
-        std::string left = analyzeExpr(b->left);
-        std::string right = analyzeExpr(b->right);
+    else if (auto b = dynamic_pointer_cast<BinaryExpr>(expr)) {
+        string left = analyzeExpr(b->left);
+        string right = analyzeExpr(b->right);
 
         if (left != "int" || right != "int")
-            throw std::runtime_error(
+            throw runtime_error(
                 "Binary operator requires int operands");
 
         return "int";
     }
 
     // ---------------- Function Call ----------------
-    else if (auto call = std::dynamic_pointer_cast<CallExpr>(expr)) {
+    else if (auto call = dynamic_pointer_cast<CallExpr>(expr)) {
 
     if (!symbols.hasFunction(call->callee))
-        throw std::runtime_error(
+        throw runtime_error(
             "Undefined function: " + call->callee);
 
     auto fn = symbols.getFunction(call->callee);
 
     if (call->args.size() != fn.paramTypes.size())
-        throw std::runtime_error(
+        throw runtime_error(
             "Function '" + call->callee +
             "' called with wrong number of arguments");
 
     for (size_t i = 0; i < call->args.size(); ++i) {
-        std::string argType = analyzeExpr(call->args[i]);
+        string argType = analyzeExpr(call->args[i]);
         if (argType != fn.paramTypes[i])
-            throw std::runtime_error(
+            throw runtime_error(
                 "Argument type mismatch in call to '" +
                 call->callee + "'");
     }
@@ -142,5 +144,5 @@ std::string SemanticAnalyzer::analyzeExpr(const ExprPtr& expr) {
 }
 
 
-    throw std::runtime_error("Unknown expression type");
+    throw runtime_error("Unknown expression type");
 }

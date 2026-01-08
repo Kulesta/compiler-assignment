@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 
+using namespace std;
+
 enum class TokenType {
     // keywords
     INT, BOOL, VOID, RETURN, IF, WHILE, TRUE, FALSE,
@@ -30,21 +32,21 @@ enum class TokenType {
 
 struct Token {
     TokenType type;
-    std::string lexeme;
+    string lexeme;
     int line;
 
-    Token(TokenType t, std::string l, int ln)
-        : type(t), lexeme(std::move(l)), line(ln) {}
+    Token(TokenType t, string l, int ln)
+        : type(t), lexeme(move(l)), line(ln) {}
 };
 
 class Lexer {
 public:
-    explicit Lexer(const std::string& src);
+    explicit Lexer(const string& src);
 
-    std::vector<Token> tokenize();
+    vector<Token> tokenize();
 
 private:
-    std::string source;
+    string source;
     size_t pos = 0;
     int line = 1;
 
@@ -55,9 +57,9 @@ private:
 
     Token identifier();
     Token number();
-    Token makeToken(TokenType type, const std::string& lexeme);
+    Token makeToken(TokenType type, const string& lexeme);
 
-    static std::unordered_map<std::string, TokenType> keywords;
+    static unordered_map<string, TokenType> keywords;
 };
 
 #endif

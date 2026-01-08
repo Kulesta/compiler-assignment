@@ -2,7 +2,9 @@
 #include "lexer.h"
 #include <cctype>
 
-std::unordered_map<std::string, TokenType> Lexer::keywords = {
+using namespace std;
+
+unordered_map<string, TokenType> Lexer::keywords = {
     {"int", TokenType::INT},
     {"bool", TokenType::BOOL},
     {"void", TokenType::VOID},
@@ -13,7 +15,7 @@ std::unordered_map<std::string, TokenType> Lexer::keywords = {
     {"false", TokenType::FALSE}
 };
 
-Lexer::Lexer(const std::string& src) : source(src) {}
+Lexer::Lexer(const string& src) : source(src) {}
 
 bool Lexer::isAtEnd() const {
     return pos >= source.length();
@@ -28,7 +30,7 @@ char Lexer::advance() {
     return source[pos++];
 }
 
-Token Lexer::makeToken(TokenType type, const std::string& lexeme) {
+Token Lexer::makeToken(TokenType type, const string& lexeme) {
     return Token(type, lexeme, line);
 }
 
@@ -54,7 +56,7 @@ Token Lexer::identifier() {
     while (!isAtEnd() && (isalnum(peek()) || peek() == '_'))
         advance();
 
-    std::string text = source.substr(start, pos - start);
+    string text = source.substr(start, pos - start);
 
     if (keywords.count(text))
         return makeToken(keywords[text], text);
@@ -67,12 +69,12 @@ Token Lexer::number() {
     while (!isAtEnd() && isdigit(peek()))
         advance();
 
-    std::string text = source.substr(start, pos - start);
+    string text = source.substr(start, pos - start);
     return makeToken(TokenType::NUMBER, text);
 }
 
-std::vector<Token> Lexer::tokenize() {
-    std::vector<Token> tokens;
+vector<Token> Lexer::tokenize() {
+    vector<Token> tokens;
 
     while (!isAtEnd()) {
         skipWhitespace();
@@ -127,7 +129,7 @@ std::vector<Token> Lexer::tokenize() {
             else if (isdigit(c))
                 tokens.push_back(number());
             else
-                tokens.push_back(makeToken(TokenType::UNKNOWN, std::string(1, c)));
+                tokens.push_back(makeToken(TokenType::UNKNOWN, string(1, c)));
         }
     }
 
